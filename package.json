@@ -1,0 +1,29 @@
+{
+  "name": "create-zd",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "main": "index.js",
+  "bin": {
+    "create-zd": "dist/outfile.cjs"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "release": "bumpp"
+  },
+  "dependencies": {
+    "kolorist": "^1.8.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.24.1",
+    "@types/prompts": "^2.4.9",
+    "bumpp": "^9.4.2",
+    "eslint": "9.5.0",
+    "prompts": "^2.4.2",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  }
+}
