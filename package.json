@@ -9,6 +9,9 @@
   "bin": {
     "create-zd": "dist/outfile.cjs"
   },
+  "files": [
+    "dist/outfile.cjs"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
