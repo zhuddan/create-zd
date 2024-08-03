@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup'
 export default ({ watch }) => (
   defineConfig({
     entry: {
-      outfile: 'src/test.ts',
+      outfile: 'src/index.ts',
     },
     format: 'cjs',
     platform: 'node',
