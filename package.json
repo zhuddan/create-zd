@@ -7,10 +7,10 @@
   "keywords": [],
   "main": "index.js",
   "bin": {
-    "create-zd": "dist/outfile.cjs"
+    "create-zd": "dist/outfile.js"
   },
   "files": [
-    "dist/outfile.cjs"
+    "dist/outfile.js"
   ],
   "scripts": {
     "dev": "tsup --watch",
