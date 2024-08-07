@@ -67,7 +67,6 @@ function moveDir(src: string, dest: string) {
  */
 export function isEmpty(dir: string) {
   if (!fs.existsSync(dir)) {
-    console.log(1)
     return true
   }
 

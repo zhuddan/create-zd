@@ -15749,7 +15749,6 @@ function moveDir(src, dest) {
 }
 function isEmpty(dir) {
   if (!import_node_fs.default.existsSync(dir)) {
-    console.log(1);
     return true;
   }
   const files = import_node_fs.default.readdirSync(dir);
