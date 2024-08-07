@@ -7,7 +7,7 @@ export default ({ watch }) => (
     },
     format: 'cjs',
     platform: 'node',
-    target: 'node16',
+    target: 'node14',
     minify: watch ? false : 'terser',
     clean: true,
   })

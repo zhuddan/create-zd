@@ -2,26 +2,29 @@ import fs from 'node:fs/promises'
 import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 
-export async function deleteFileOrDir(path: string) {
-  const stat = await fs.stat(path)
-  if (stat.isDirectory()) {
-    const files = await fs.readdir(path)
-    for (let index = 0; index < files.length; index++) {
-      const file = files[index]
-      await deleteFileOrDir(`${path}/${file}`)
-    }
-    await deleteDir(path)
-  }
-  else {
-    await deleteFile(path)
-  }
-}
-async function deleteFile(filePath: string) {
-  await fs.unlink(filePath)
-}
+export async function deleteFileOrDir(filePath: string) {
+  try {
+    const stat = await fs.lstat(filePath) // 使用 lstat 来获取符号链接的状态
 
-async function deleteDir(dirPath: string) {
-  await fs.rmdir(dirPath)
+    if (stat.isDirectory()) {
+      const files = await fs.readdir(filePath)
+      for (const file of files) {
+        const fullPath = path.join(filePath, file)
+        await deleteFileOrDir(fullPath)
+      }
+      await fs.rmdir(filePath)
+    }
+    else if (stat.isSymbolicLink()) {
+      // 如果是符号链接，直接删除它
+      await fs.unlink(filePath)
+    }
+    else {
+      await fs.unlink(filePath)
+    }
+  }
+  catch (error) {
+    console.error(`删除 ${filePath} 时出错:`, (error as any).message)
+  }
 }
 
 export async function moveFiles(from: string, to: string) {
