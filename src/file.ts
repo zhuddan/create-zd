@@ -61,3 +61,23 @@ function moveDir(src: string, dest: string) {
   }
   fs.rmdirSync(src)
 }
+
+/**
+ * 检查 目标目录 是不是空目录？
+ */
+export function isEmpty(dir: string) {
+  if (!fs.existsSync(dir)) {
+    console.log(1)
+    return true
+  }
+
+  const files = fs.readdirSync(dir)
+  if (files.length === 0) {
+    return true
+  }
+
+  if (files.length === 1 && files[0] === '.git') {
+    return true
+  }
+  return false
+}

@@ -15747,6 +15747,20 @@ function moveDir(src, dest) {
   }
   import_node_fs.default.rmdirSync(src);
 }
+function isEmpty(dir) {
+  if (!import_node_fs.default.existsSync(dir)) {
+    console.log(1);
+    return true;
+  }
+  const files = import_node_fs.default.readdirSync(dir);
+  if (files.length === 0) {
+    return true;
+  }
+  if (files.length === 1 && files[0] === ".git") {
+    return true;
+  }
+  return false;
+}
 
 // src/download.ts
 function downloadTemplate(templateName, targetName) {
@@ -15835,20 +15849,6 @@ function shouldOverwrite() {
   });
 }
 var loading;
-function isEmpty(dir) {
-  if (!import_node_fs3.default.existsSync(dir)) {
-    console.log(1);
-    return true;
-  }
-  const files = import_node_fs3.default.readdirSync(dir);
-  if (files.length === 0) {
-    return true;
-  }
-  if (files.length === 1 && files[0] === ".git") {
-    return true;
-  }
-  return false;
-}
 async function start() {
   try {
     const result = await init();

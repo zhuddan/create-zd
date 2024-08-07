@@ -9,7 +9,7 @@ import figures from 'prompts/lib/util/figures.js'
 import { type Ora, ora } from './ora'
 import { downloadTemplate } from './download'
 import { onCancel } from './cancel'
-import { deleteFileOrDir } from './file'
+import { deleteFileOrDir, isEmpty } from './file'
 
 export const instructions = gray('使用↑↓选择，空格或←→选中，a全选，回车确认')
 export const hint = '使用↑↓选择，回车确认'
@@ -74,26 +74,6 @@ function shouldOverwrite() {
 }
 
 let loading: Ora
-
-/**
- * 检查 目标目录 是不是空目录？
- */
-function isEmpty(dir: string) {
-  if (!fs.existsSync(dir)) {
-    console.log(1)
-    return true
-  }
-
-  const files = fs.readdirSync(dir)
-  if (files.length === 0) {
-    return true
-  }
-
-  if (files.length === 1 && files[0] === '.git') {
-    return true
-  }
-  return false
-}
 
 async function start() {
   try {
