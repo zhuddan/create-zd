@@ -7,7 +7,7 @@ import prompts from 'prompts'
 import { bold, gray, lightCyan, red } from 'kolorist'
 import figures from 'prompts/lib/util/figures.js'
 import { type Ora, ora } from './ora'
-import { downloadTemplate } from './downloadTemplate'
+import { downloadTemplate } from './download'
 import { onCancel } from './cancel'
 import { deleteFileOrDir } from './file'
 

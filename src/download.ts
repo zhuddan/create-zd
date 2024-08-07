@@ -1,13 +1,12 @@
 import https from 'node:https'
 import fs from 'node:fs'
-import path from 'node:path'
 import { promisify } from 'node:util'
-import process from 'node:process'
 import unzipper from 'unzipper'
+import { moveFiles } from './file'
 
-const rename = promisify(fs.rename)
-const readdir = promisify(fs.readdir)
-const stat = promisify(fs.stat)
+// const rename = promisify(fs.rename)
+// const readdir = promisify(fs.readdir)
+// const stat = promisify(fs.stat)
 
 export function downloadTemplate(templateName: string, targetName: string) {
   console.log(templateName, targetName)
@@ -34,46 +33,6 @@ export function downloadTemplate(templateName: string, targetName: string) {
         .on('error', reject)
     }).on('error', reject)
   })
-}
-
-async function moveFiles(from: string, to: string) {
-  const files = await readdir(from)
-  for (const file of files) {
-    const oldPath = path.join(from, file)
-    const newPath = path.join(to, file)
-    const stats = await stat(oldPath)
-    if (stats.isDirectory()) {
-      await moveDir(oldPath, newPath)
-    }
-    else {
-      await rename(oldPath, newPath)
-    }
-  }
-
-  fs.rmdirSync(from)
-}
-
-async function moveDir(src: string, dest: string) {
-  const files = await readdir(src)
-  try {
-    fs.mkdirSync(dest, { recursive: true })
-  }
-  catch (error) {
-    console.log('error', error)
-  }
-
-  for (const file of files) {
-    const oldPath = path.join(src, file)
-    const newPath = path.join(dest, file)
-    const stats = await stat(oldPath)
-    if (stats.isDirectory()) {
-      await moveDir(oldPath, newPath)
-    }
-    else {
-      await rename(oldPath, newPath)
-    }
-  }
-  fs.rmdirSync(src)
 }
 
 // function changePackageName(target: string) {

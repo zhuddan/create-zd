@@ -7581,7 +7581,7 @@ var require_polyfills = __commonJS({
       }
       if (platform === "win32") {
         fs4.rename = typeof fs4.rename !== "function" ? fs4.rename : function(fs$rename) {
-          function rename2(from, to, cb) {
+          function rename(from, to, cb) {
             var start2 = Date.now();
             var backoff = 0;
             fs$rename(from, to, function CB(er) {
@@ -7601,8 +7601,8 @@ var require_polyfills = __commonJS({
               if (cb) cb(er);
             });
           }
-          if (Object.setPrototypeOf) Object.setPrototypeOf(rename2, fs$rename);
-          return rename2;
+          if (Object.setPrototypeOf) Object.setPrototypeOf(rename, fs$rename);
+          return rename;
         }(fs4.rename);
       }
       fs4.read = typeof fs4.read !== "function" ? fs4.read : function(fs$read) {
@@ -8080,9 +8080,9 @@ var require_graceful_fs = __commonJS({
         }
       }
       var fs$readdir = fs5.readdir;
-      fs5.readdir = readdir2;
+      fs5.readdir = readdir;
       var noReaddirOptionVersions = /^v[0-5]\./;
-      function readdir2(path2, options, cb) {
+      function readdir(path2, options, cb) {
         if (typeof options === "function")
           cb = options, options = null;
         var go$readdir = noReaddirOptionVersions.test(process.version) ? function go$readdir2(path3, options2, cb2, startTime) {
@@ -8661,7 +8661,7 @@ var require_copy = __commonJS({
     var { mkdirs } = require_mkdirs();
     var { pathExists } = require_path_exists();
     var { utimesMillis } = require_utimes();
-    var stat2 = require_stat();
+    var stat = require_stat();
     async function copy(src, dest, opts = {}) {
       if (typeof opts === "function") {
         opts = { filter: opts };
@@ -8675,8 +8675,8 @@ var require_copy = __commonJS({
           "fs-extra-WARN0001"
         );
       }
-      const { srcStat, destStat } = await stat2.checkPaths(src, dest, "copy", opts);
-      await stat2.checkParentPaths(src, srcStat, dest, "copy");
+      const { srcStat, destStat } = await stat.checkPaths(src, dest, "copy", opts);
+      await stat.checkParentPaths(src, srcStat, dest, "copy");
       const include = await runFilter(src, dest, opts);
       if (!include) return;
       const destParent = path2.dirname(dest);
@@ -8737,7 +8737,7 @@ var require_copy = __commonJS({
         const destItem = path2.join(dest, item);
         const include = await runFilter(srcItem, destItem, opts);
         if (!include) return;
-        const { destStat: destStat2 } = await stat2.checkPaths(srcItem, destItem, "copy", opts);
+        const { destStat: destStat2 } = await stat.checkPaths(srcItem, destItem, "copy", opts);
         return getStatsAndPerformCopy(destStat2, srcItem, destItem, opts);
       }));
       if (!destStat) {
@@ -8762,10 +8762,10 @@ var require_copy = __commonJS({
       if (opts.dereference) {
         resolvedDest = path2.resolve(process.cwd(), resolvedDest);
       }
-      if (stat2.isSrcSubdir(resolvedSrc, resolvedDest)) {
+      if (stat.isSrcSubdir(resolvedSrc, resolvedDest)) {
         throw new Error(`Cannot copy '${resolvedSrc}' to a subdirectory of itself, '${resolvedDest}'.`);
       }
-      if (stat2.isSrcSubdir(resolvedDest, resolvedSrc)) {
+      if (stat.isSrcSubdir(resolvedDest, resolvedSrc)) {
         throw new Error(`Cannot overwrite '${resolvedDest}' with '${resolvedSrc}'.`);
       }
       await fs4.unlink(dest);
@@ -8783,7 +8783,7 @@ var require_copy_sync = __commonJS({
     var path2 = require("path");
     var mkdirsSync = require_mkdirs().mkdirsSync;
     var utimesMillisSync = require_utimes().utimesMillisSync;
-    var stat2 = require_stat();
+    var stat = require_stat();
     function copySync(src, dest, opts) {
       if (typeof opts === "function") {
         opts = { filter: opts };
@@ -8798,8 +8798,8 @@ var require_copy_sync = __commonJS({
           "fs-extra-WARN0002"
         );
       }
-      const { srcStat, destStat } = stat2.checkPathsSync(src, dest, "copy", opts);
-      stat2.checkParentPathsSync(src, srcStat, dest, "copy");
+      const { srcStat, destStat } = stat.checkPathsSync(src, dest, "copy", opts);
+      stat.checkParentPathsSync(src, srcStat, dest, "copy");
       if (opts.filter && !opts.filter(src, dest)) return;
       const destParent = path2.dirname(dest);
       if (!fs4.existsSync(destParent)) mkdirsSync(destParent);
@@ -8865,7 +8865,7 @@ var require_copy_sync = __commonJS({
       const srcItem = path2.join(src, item);
       const destItem = path2.join(dest, item);
       if (opts.filter && !opts.filter(srcItem, destItem)) return;
-      const { destStat } = stat2.checkPathsSync(srcItem, destItem, "copy", opts);
+      const { destStat } = stat.checkPathsSync(srcItem, destItem, "copy", opts);
       return getStats(destStat, srcItem, destItem, opts);
     }
     function onLink(destStat, src, dest, opts) {
@@ -8886,10 +8886,10 @@ var require_copy_sync = __commonJS({
         if (opts.dereference) {
           resolvedDest = path2.resolve(process.cwd(), resolvedDest);
         }
-        if (stat2.isSrcSubdir(resolvedSrc, resolvedDest)) {
+        if (stat.isSrcSubdir(resolvedSrc, resolvedDest)) {
           throw new Error(`Cannot copy '${resolvedSrc}' to a subdirectory of itself, '${resolvedDest}'.`);
         }
-        if (stat2.isSrcSubdir(resolvedDest, resolvedSrc)) {
+        if (stat.isSrcSubdir(resolvedDest, resolvedSrc)) {
           throw new Error(`Cannot overwrite '${resolvedDest}' with '${resolvedSrc}'.`);
         }
         return copyLink(resolvedSrc, dest);
@@ -9475,11 +9475,11 @@ var require_move = __commonJS({
     var { remove } = require_remove();
     var { mkdirp } = require_mkdirs();
     var { pathExists } = require_path_exists();
-    var stat2 = require_stat();
+    var stat = require_stat();
     async function move(src, dest, opts = {}) {
       const overwrite = opts.overwrite || opts.clobber || false;
-      const { srcStat, isChangingCase = false } = await stat2.checkPaths(src, dest, "move", opts);
-      await stat2.checkParentPaths(src, srcStat, dest, "move");
+      const { srcStat, isChangingCase = false } = await stat.checkPaths(src, dest, "move", opts);
+      await stat.checkParentPaths(src, srcStat, dest, "move");
       const destParent = path2.dirname(dest);
       const parsedParentPath = path2.parse(destParent);
       if (parsedParentPath.root !== destParent) {
@@ -9526,12 +9526,12 @@ var require_move_sync = __commonJS({
     var copySync = require_copy2().copySync;
     var removeSync = require_remove().removeSync;
     var mkdirpSync = require_mkdirs().mkdirpSync;
-    var stat2 = require_stat();
+    var stat = require_stat();
     function moveSync(src, dest, opts) {
       opts = opts || {};
       const overwrite = opts.overwrite || opts.clobber || false;
-      const { srcStat, isChangingCase = false } = stat2.checkPathsSync(src, dest, "move", opts);
-      stat2.checkParentPathsSync(src, srcStat, dest, "move");
+      const { srcStat, isChangingCase = false } = stat.checkPathsSync(src, dest, "move", opts);
+      stat.checkParentPathsSync(src, srcStat, dest, "move");
       if (!isParentRoot(dest)) mkdirpSync(path2.dirname(dest));
       return doRename(src, dest, overwrite, isChangingCase);
     }
@@ -9541,15 +9541,15 @@ var require_move_sync = __commonJS({
       return parsedPath.root === parent;
     }
     function doRename(src, dest, overwrite, isChangingCase) {
-      if (isChangingCase) return rename2(src, dest, overwrite);
+      if (isChangingCase) return rename(src, dest, overwrite);
       if (overwrite) {
         removeSync(dest);
-        return rename2(src, dest, overwrite);
+        return rename(src, dest, overwrite);
       }
       if (fs4.existsSync(dest)) throw new Error("dest already exists.");
-      return rename2(src, dest, overwrite);
+      return rename(src, dest, overwrite);
     }
-    function rename2(src, dest, overwrite) {
+    function rename(src, dest, overwrite) {
       try {
         fs4.renameSync(src, dest);
       } catch (err) {
@@ -13613,7 +13613,7 @@ var require_promisify = __commonJS({
         util.toFastProperties(obj2);
         return obj2;
       }
-      function promisify2(callback, receiver2, multiArgs) {
+      function promisify(callback, receiver2, multiArgs) {
         return makeNodePromisified(
           callback,
           receiver2,
@@ -13633,7 +13633,7 @@ var require_promisify = __commonJS({
         options = Object(options);
         var receiver2 = options.context === void 0 ? THIS : options.context;
         var multiArgs = !!options.multiArgs;
-        var ret2 = promisify2(fn, receiver2, multiArgs);
+        var ret2 = promisify(fn, receiver2, multiArgs);
         util.copyDescriptors(fn, ret2, propsFilter);
         return ret2;
       };
@@ -15689,15 +15689,66 @@ function ora(message) {
   return new Ora(message);
 }
 
-// src/downloadTemplate.ts
+// src/download.ts
 var import_node_https = __toESM(require("https"));
+var import_node_fs2 = __toESM(require("fs"));
+var import_unzipper = __toESM(require_unzip2());
+
+// src/file.ts
 var import_node_fs = __toESM(require("fs"));
 var import_node_path = __toESM(require("path"));
-var import_node_util = require("util");
-var import_unzipper = __toESM(require_unzip2());
-var rename = (0, import_node_util.promisify)(import_node_fs.default.rename);
-var readdir = (0, import_node_util.promisify)(import_node_fs.default.readdir);
-var stat = (0, import_node_util.promisify)(import_node_fs.default.stat);
+async function deleteFileOrDir(path2) {
+  const stat = import_node_fs.default.statSync(path2);
+  if (stat.isDirectory()) {
+    import_node_fs.default.readdirSync(path2).forEach((e) => {
+      deleteFileOrDir(`${path2}/${e}`);
+    });
+    deleteDir(path2);
+  } else {
+    deleteFile(path2);
+  }
+}
+function deleteFile(filePath) {
+  import_node_fs.default.unlinkSync(filePath);
+}
+function deleteDir(dirPath) {
+  import_node_fs.default.rmdirSync(dirPath);
+}
+function moveFiles(from, to) {
+  const files = import_node_fs.default.readdirSync(from);
+  for (const file of files) {
+    const oldPath = import_node_path.default.join(from, file);
+    const newPath = import_node_path.default.join(to, file);
+    const stats = import_node_fs.default.statSync(oldPath);
+    if (stats.isDirectory()) {
+      moveDir(oldPath, newPath);
+    } else {
+      import_node_fs.default.renameSync(oldPath, newPath);
+    }
+  }
+  import_node_fs.default.rmdirSync(from);
+}
+function moveDir(src, dest) {
+  const files = import_node_fs.default.readdirSync(src);
+  try {
+    import_node_fs.default.mkdirSync(dest, { recursive: true });
+  } catch (error) {
+    console.log("error", error);
+  }
+  for (const file of files) {
+    const oldPath = import_node_path.default.join(src, file);
+    const newPath = import_node_path.default.join(dest, file);
+    const stats = import_node_fs.default.statSync(oldPath);
+    if (stats.isDirectory()) {
+      moveDir(oldPath, newPath);
+    } else {
+      import_node_fs.default.renameSync(oldPath, newPath);
+    }
+  }
+  import_node_fs.default.rmdirSync(src);
+}
+
+// src/download.ts
 function downloadTemplate(templateName, targetName) {
   console.log(templateName, targetName);
   templateName = `template-${templateName}`;
@@ -15711,7 +15762,7 @@ function downloadTemplate(templateName, targetName) {
       res.pipe(import_unzipper.default.Extract({ path: `./${downloadPath}` })).on("close", async () => {
         try {
           await moveFiles(`./${downloadPath}/${templateName}-master`, `./${targetName}`);
-          import_node_fs.default.rmdirSync(downloadPath);
+          import_node_fs2.default.rmdirSync(downloadPath);
           resolve("");
         } catch (error) {
           reject(error);
@@ -15720,39 +15771,6 @@ function downloadTemplate(templateName, targetName) {
     }).on("error", reject);
   });
 }
-async function moveFiles(from, to) {
-  const files = await readdir(from);
-  for (const file of files) {
-    const oldPath = import_node_path.default.join(from, file);
-    const newPath = import_node_path.default.join(to, file);
-    const stats = await stat(oldPath);
-    if (stats.isDirectory()) {
-      await moveDir(oldPath, newPath);
-    } else {
-      await rename(oldPath, newPath);
-    }
-  }
-  import_node_fs.default.rmdirSync(from);
-}
-async function moveDir(src, dest) {
-  const files = await readdir(src);
-  try {
-    import_node_fs.default.mkdirSync(dest, { recursive: true });
-  } catch (error) {
-    console.log("error", error);
-  }
-  for (const file of files) {
-    const oldPath = import_node_path.default.join(src, file);
-    const newPath = import_node_path.default.join(dest, file);
-    const stats = await stat(oldPath);
-    if (stats.isDirectory()) {
-      await moveDir(oldPath, newPath);
-    } else {
-      await rename(oldPath, newPath);
-    }
-  }
-  import_node_fs.default.rmdirSync(src);
-}
 
 // src/cancel.ts
 var import_kolorist2 = require("kolorist");
@@ -15760,26 +15778,6 @@ var import_figures2 = __toESM(require_figures2());
 var cancelMesssage = `${(0, import_kolorist2.red)(import_figures2.default.cross)} ${(0, import_kolorist2.bold)("\u64CD\u4F5C\u5DF2\u53D6\u6D88")}`;
 function onCancel() {
   throw new Error(cancelMesssage);
-}
-
-// src/file.ts
-var import_node_fs2 = __toESM(require("fs"));
-async function deleteFileOrDir(path2) {
-  const stat2 = import_node_fs2.default.statSync(path2);
-  if (stat2.isDirectory()) {
-    import_node_fs2.default.readdirSync(path2).forEach((e) => {
-      deleteFileOrDir(`${path2}/${e}`);
-    });
-    deleteDir(path2);
-  } else {
-    deleteFile(path2);
-  }
-}
-function deleteFile(filePath) {
-  import_node_fs2.default.unlinkSync(filePath);
-}
-function deleteDir(dirPath) {
-  import_node_fs2.default.rmdirSync(dirPath);
 }
 
 // src/index.ts
