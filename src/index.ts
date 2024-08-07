@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 import process from 'node:process'
-import fs from 'node:fs'
 import path from 'node:path'
 import { exec } from 'node:child_process'
+import fs from 'node:fs'
 import prompts from 'prompts'
-import { bold, gray, lightCyan } from 'kolorist'
+import { bold, gray, lightCyan, red } from 'kolorist'
+import figures from 'prompts/lib/util/figures.js'
 import { type Ora, ora } from './ora'
+import { downloadTemplate } from './downloadTemplate'
+import { onCancel } from './cancel'
+import { deleteFileOrDir } from './file'
 
 export const instructions = gray('使用↑↓选择，空格或←→选中，a全选，回车确认')
 export const hint = '使用↑↓选择，回车确认'
@@ -36,7 +40,7 @@ function init() {
     {
       name: 'projectName',
       type: 'text',
-      message: '请输入项目名称:',
+      message: '请输入项目名称:2',
       initial: 'zd-app',
     },
     {
@@ -51,51 +55,77 @@ function init() {
         }
       }),
     },
-  ])
+  ], {
+    onCancel,
+  })
 }
+
+function shouldOverwrite() {
+  return prompts({
+    name: 'overwrite',
+    type: 'toggle',
+    message: '文件已经存在, 是否覆盖文件夹',
+    initial: false,
+    active: '是',
+    inactive: '否',
+  }, {
+    onCancel,
+  })
+}
+
 let loading: Ora
 
-function sleep(t = 100) {
-  return new Promise<void>((resolve) => {
-    const timer = setTimeout(() => {
-      clearTimeout(timer)
-      resolve()
-    }, t)
-  })
+/**
+ * 检查 目标目录 是不是空目录？
+ */
+function isEmpty(dir: string) {
+  if (!fs.existsSync(dir)) {
+    console.log(1)
+    return true
+  }
+
+  const files = fs.readdirSync(dir)
+  if (files.length === 0) {
+    return true
+  }
+
+  if (files.length === 1 && files[0] === '.git') {
+    return true
+  }
+  return false
 }
 
-init()
-  .then((result) => {
-  // loading = ora(`${bold('正在创建模板...')}`).start()
-    console.log('loading')
-    // const root = path.join(cwd, result.projectName!)
-    // const userAgent = process.env.npm_config_user_agent ?? ''
-    // const packageManager = /pnpm/.test(userAgent) ? 'pnpm' : /yarn/.test(userAgent) ? 'yarn' : 'npm'
-    const url = `https://github.com/zhuddan/template-${result.templateType.type}`
-    return Promise.all([execPromise(`git clone --depth 1 ${url} ${result.projectName}`), result.projectName])
-  }).then((res) => {
-    const cwd = process.cwd()
-    const root = path.join(cwd, res[1])
-    console.log('success')
-  // loading.succeed(`${bold('模板创建完成！')}`)
-  }).catch((e) => {
-    console.log(e)
+async function start() {
+  try {
+    const result = await init()
+
+    const overwrite = isEmpty(result.projectName)
+      ? true
+      : (await shouldOverwrite()).overwrite
+
+    if (overwrite) {
+      if (!fs.existsSync(result.projectName)) {
+        fs.mkdirSync(result.projectName)
+      }
+      else {
+        fs.readdirSync(result.projectName).forEach((e) => {
+          deleteFileOrDir(`${result.projectName}/${e}`)
+        })
+      }
+      loading = ora(`${bold('正在下载模板...')}`).start()
+      await downloadTemplate(result.templateType.type, result.projectName)
+      loading.succeed('模板创建成功~')
+    }
+    else {
+      onCancel()
+    }
+  }
+  catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message)
+    }
     process.exit(0)
-  })
-
-function execPromise(command: string) {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(`Error executing command: ${error.message}`))
-        return
-      }
-
-      if (!stderr.includes('Cloning into')) {
-        reject(new Error(`stderr: ${stderr}`))
-        return
-      }
-      resolve(stdout)
-    })
-  })
+  }
 }
+
+start()
