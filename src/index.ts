@@ -22,8 +22,8 @@ function init() {
 
   let colorText = ''
 
-  const startColor = { r: 0xE6, g: 0x7E, b: 0x22 }
-  const endColor = { r: 0x34, g: 0x98, b: 0xDB }
+  const startColor = { r: 0x3B, g: 0xD1, b: 0x91 }
+  const endColor = { r: 0x2B, g: 0x4C, b: 0xEE }
 
   for (let i = 0; i < text.length; i++) {
     const ratio = i / (text.length - 1)
