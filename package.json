@@ -10,6 +10,7 @@
     "create-zd": "dist/script.js"
   },
   "files": [
+    "./README.md",
     "dist/script.js"
   ],
   "scripts": {
