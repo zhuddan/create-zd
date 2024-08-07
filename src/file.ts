@@ -1,48 +1,49 @@
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
+import { existsSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 
 export async function deleteFileOrDir(path: string) {
-  const stat = fs.statSync(path)
+  const stat = await fs.stat(path)
   if (stat.isDirectory()) {
-    fs.readdirSync(path)
+    (await fs.readdir(path))
       .forEach((e) => {
         deleteFileOrDir(`${path}/${e}`)
       })
-    deleteDir(path)
+    await deleteDir(path)
   }
   else {
-    deleteFile(path)
+    await deleteFile(path)
   }
 }
-function deleteFile(filePath: string) {
-  fs.unlinkSync(filePath)
+async function deleteFile(filePath: string) {
+  await fs.unlink(filePath)
 }
 
-function deleteDir(dirPath: string) {
-  fs.rmdirSync(dirPath)
+async function deleteDir(dirPath: string) {
+  await fs.rmdir(dirPath)
 }
 
-export function moveFiles(from: string, to: string) {
-  const files = fs.readdirSync(from)
+export async function moveFiles(from: string, to: string) {
+  const files = await fs.readdir(from)
   for (const file of files) {
     const oldPath = path.join(from, file)
     const newPath = path.join(to, file)
-    const stats = fs.statSync(oldPath)
+    const stats = await fs.stat(oldPath)
     if (stats.isDirectory()) {
-      moveDir(oldPath, newPath)
+      await moveDir(oldPath, newPath)
     }
     else {
-      fs.renameSync(oldPath, newPath)
+      await fs.rename(oldPath, newPath)
     }
   }
 
-  fs.rmdirSync(from)
+  await fs.rmdir(from)
 }
 
-function moveDir(src: string, dest: string) {
-  const files = fs.readdirSync(src)
+async function moveDir(src: string, dest: string) {
+  const files = await fs.readdir(src)
   try {
-    fs.mkdirSync(dest, { recursive: true })
+    await fs.mkdir(dest, { recursive: true })
   }
   catch (error) {
     console.log('error', error)
@@ -51,26 +52,26 @@ function moveDir(src: string, dest: string) {
   for (const file of files) {
     const oldPath = path.join(src, file)
     const newPath = path.join(dest, file)
-    const stats = fs.statSync(oldPath)
+    const stats = await fs.stat(oldPath)
     if (stats.isDirectory()) {
-      moveDir(oldPath, newPath)
+      await moveDir(oldPath, newPath)
     }
     else {
-      fs.renameSync(oldPath, newPath)
+      await fs.rename(oldPath, newPath)
     }
   }
-  fs.rmdirSync(src)
+  await fs.rmdir(src)
 }
 
 /**
  * 检查 目标目录 是不是空目录？
  */
 export function isEmpty(dir: string) {
-  if (!fs.existsSync(dir)) {
+  if (!existsSync(dir)) {
     return true
   }
 
-  const files = fs.readdirSync(dir)
+  const files = readdirSync(dir)
   if (files.length === 0) {
     return true
   }

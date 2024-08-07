@@ -16,7 +16,7 @@ export function downloadTemplate(templateName: string, targetName: string) {
         .pipe(unzipper.Extract({ path: `./${downloadPath}` }))
         .on('close', async () => {
           try {
-            moveFiles(`./${downloadPath}/${templateName}-master`, `./${targetName}`)
+            await moveFiles(`./${downloadPath}/${templateName}-master`, `./${targetName}`)
             fs.rmdirSync(downloadPath)
             resolve('')
           }
