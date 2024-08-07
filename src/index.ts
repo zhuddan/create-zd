@@ -49,7 +49,7 @@ function init() {
     {
       name: 'templateType',
       type: 'select',
-      message: '请选择 uni-app 模板？',
+      message: '请选择模板?',
       hint,
       choices: ['vue', 'react', 'vanilla'].map((type) => {
         return {
@@ -68,7 +68,7 @@ function shouldOverwrite() {
   return prompts({
     name: 'overwrite',
     type: 'toggle',
-    message: '文件已经存在, 是否覆盖文件夹',
+    message: '文件已经存在, 是否覆盖文件夹?',
     initial: false,
     active: '是',
     inactive: '否',
