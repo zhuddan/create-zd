@@ -10,6 +10,7 @@ import { type Ora, ora } from './ora'
 import { downloadTemplate } from './download'
 import { onCancel } from './cancel'
 import { deleteFileOrDir, isEmpty } from './file'
+import { changePackageName } from './change'
 
 export const instructions = gray('使用↑↓选择，空格或←→选中，a全选，回车确认')
 export const hint = '使用↑↓选择，回车确认'
@@ -94,7 +95,9 @@ async function start() {
       }
       loading = ora(`${bold('正在下载模板...')}`).start()
       await downloadTemplate(result.templateType.type, result.projectName)
-      loading.succeed('模板创建成功~')
+      console.log(result.projectName)
+      changePackageName(`${result.projectName}/package.json`, `${result.projectName}`)
+      // loading.succeed('模板创建成功~')
     }
     else {
       onCancel()
