@@ -86,7 +86,9 @@ async function start() {
       name: 'title',
       type: 'text',
       message: '请输入项目标题:',
-      initial: `My ${capitalizeFirstLetter(result.templateType.type)} App`,
+      initial: result.templateType.type === 'vanilla'
+        ? 'My-App'
+        : `My-${capitalizeFirstLetter(result.templateType.type)}-App`,
     })
 
     const cwd = process.cwd()
@@ -109,7 +111,6 @@ async function start() {
       }
       loading = ora(`${bold('正在下载模板...')}`).start()
       await downloadTemplate(result.templateType.type, result.projectName)
-      console.log(result.projectName)
       changePackageName(`${result.projectName}/package.json`, `${result.projectName}`)
       changePackageTitle(`${result.projectName}/.env`, title)
       loading.succeed('模板创建成功~')

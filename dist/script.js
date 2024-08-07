@@ -15903,7 +15903,7 @@ async function start() {
       name: "title",
       type: "text",
       message: "\u8BF7\u8F93\u5165\u9879\u76EE\u6807\u9898:",
-      initial: `My ${capitalizeFirstLetter(result.templateType.type)} App`
+      initial: result.templateType.type === "vanilla" ? "My-App" : `My-${capitalizeFirstLetter(result.templateType.type)}-App`
     });
     const cwd = import_node_process2.default.cwd();
     const root = import_node_path3.default.join(cwd, result.projectName);
@@ -15920,7 +15920,6 @@ async function start() {
       }
       loading = ora(`${(0, import_kolorist4.bold)("\u6B63\u5728\u4E0B\u8F7D\u6A21\u677F...")}`).start();
       await downloadTemplate(result.templateType.type, result.projectName);
-      console.log(result.projectName);
       changePackageName(`${result.projectName}/package.json`, `${result.projectName}`);
       changePackageTitle(`${result.projectName}/.env`, title);
       loading.succeed("\u6A21\u677F\u521B\u5EFA\u6210\u529F~");
