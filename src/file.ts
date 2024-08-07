@@ -5,10 +5,11 @@ import path from 'node:path'
 export async function deleteFileOrDir(path: string) {
   const stat = await fs.stat(path)
   if (stat.isDirectory()) {
-    (await fs.readdir(path))
-      .forEach((e) => {
-        deleteFileOrDir(`${path}/${e}`)
-      })
+    const files = await fs.readdir(path)
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index]
+      await deleteFileOrDir(`${path}/${file}`)
+    }
     await deleteDir(path)
   }
   else {
