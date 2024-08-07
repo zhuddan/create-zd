@@ -10,9 +10,11 @@ import { type Ora, ora } from './ora'
 import { downloadTemplate } from './download'
 import { onCancel } from './cancel'
 import { deleteFileOrDir, isEmpty } from './file'
-import { changePackageName } from './change'
+import { changePackageName, changePackageTitle } from './change'
+import { capitalizeFirstLetter } from './utils'
+import { printFinish } from './printFinish'
 
-export const instructions = gray('使用↑↓选择，空格或←→选中，a全选，回车确认')
+// export const instructions = gray('使用↑↓选择，空格或←→选中，a全选，回车确认')
 export const hint = '使用↑↓选择，回车确认'
 
 function init() {
@@ -41,7 +43,7 @@ function init() {
     {
       name: 'projectName',
       type: 'text',
-      message: '请输入项目名称:2',
+      message: '请输入项目名称:',
       initial: 'zd-app',
     },
     {
@@ -56,6 +58,7 @@ function init() {
         }
       }),
     },
+
   ], {
     onCancel,
   })
@@ -79,6 +82,17 @@ let loading: Ora
 async function start() {
   try {
     const result = await init()
+    const { title } = await prompts({
+      name: 'title',
+      type: 'text',
+      message: '请输入项目标题:',
+      initial: `My ${capitalizeFirstLetter(result.templateType.type)} App`,
+    })
+
+    const cwd = process.cwd()
+    const root = path.join(cwd, result.projectName!)
+    const userAgent = process.env.npm_config_user_agent ?? ''
+    const packageManager = /pnpm/.test(userAgent) ? 'pnpm' : /yarn/.test(userAgent) ? 'yarn' : 'npm'
 
     const overwrite = isEmpty(result.projectName)
       ? true
@@ -97,7 +111,9 @@ async function start() {
       await downloadTemplate(result.templateType.type, result.projectName)
       console.log(result.projectName)
       changePackageName(`${result.projectName}/package.json`, `${result.projectName}`)
-      // loading.succeed('模板创建成功~')
+      changePackageTitle(`${result.projectName}/.env`, title)
+      loading.succeed('模板创建成功~')
+      printFinish(root, cwd, packageManager, loading)
     }
     else {
       onCancel()

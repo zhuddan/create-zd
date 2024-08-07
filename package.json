@@ -7,17 +7,17 @@
   "keywords": [],
   "main": "index.js",
   "bin": {
-    "create-zd": "dist/outfile.js"
+    "create-zd": "dist/script.js"
   },
   "files": [
-    "dist/outfile.js"
+    "dist/script.js"
   ],
   "scripts": {
     "dev": "tsup --watch",
     "test": "tsx watch src/test.ts",
     "build": "tsup",
     "release": "bumpp",
-    "start": "node --watch --trace-deprecation dist/script.js"
+    "start": "node --trace-deprecation dist/script.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.623.0",
