@@ -4,7 +4,6 @@ import unzipper from 'unzipper'
 import { deleteFileOrDir, moveFiles } from './file'
 
 export function downloadTemplate(templateName: string, targetName: string) {
-  templateName = `template-${templateName}`
   return new Promise((resolve, reject) => {
     const url = `https://codeload.github.com/zhuddan/${templateName}/zip/refs/heads/master?t=${Date.now()}`
     const _req = https.get(url, (res) => {

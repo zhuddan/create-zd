@@ -51,14 +51,25 @@ function init() {
       type: 'select',
       message: '请选择模板?',
       hint,
-      choices: ['vue', 'react', 'vanilla'].map((type) => {
-        return {
-          title: type,
-          value: { type },
-        }
-      }),
+      choices: [
+        {
+          title: 'vue',
+          value: { type: 'template-vue' },
+        },
+        {
+          title: 'react',
+          value: { type: 'template-react' },
+        },
+        {
+          title: 'uni-app',
+          value: { type: 'template-uni-app' },
+        },
+        {
+          title: 'vanilla',
+          value: { type: 'template-vanilla' },
+        },
+      ],
     },
-
   ], {
     onCancel,
   })
@@ -86,7 +97,7 @@ async function start() {
       name: 'title',
       type: 'text',
       message: '请输入项目标题:',
-      initial: result.templateType.type === 'vanilla'
+      initial: result.templateType.type === 'template-vanilla'
         ? 'My-App'
         : `My-${capitalizeFirstLetter(result.templateType.type)}-App`,
     })
