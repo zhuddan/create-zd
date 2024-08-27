@@ -70,9 +70,7 @@ function init() {
         },
       ],
     },
-  ], {
-    onCancel,
-  })
+  ], { onCancel })
 }
 
 function shouldOverwrite() {
@@ -83,9 +81,7 @@ function shouldOverwrite() {
     initial: false,
     active: '是',
     inactive: '否',
-  }, {
-    onCancel,
-  })
+  }, { onCancel })
 }
 
 let loading: Ora
@@ -93,14 +89,14 @@ let loading: Ora
 async function start() {
   try {
     const result = await init()
-    const { title } = await prompts({
-      name: 'title',
-      type: 'text',
-      message: '请输入项目标题:',
-      initial: result.templateType.type === 'template-vanilla'
-        ? 'My-App'
-        : `My-${capitalizeFirstLetter(result.templateType.type)}-App`,
-    })
+    // const { title } = await prompts({
+    //   name: 'title',
+    //   type: 'text',
+    //   message: '请输入项目标题:',
+    //   initial: result.templateType.type === 'template-vanilla'
+    //     ? 'My-App'
+    //     : `My-${capitalizeFirstLetter(result.templateType.type)}-App`,
+    // })
 
     const cwd = process.cwd()
     const root = path.join(cwd, result.projectName!)
@@ -123,7 +119,7 @@ async function start() {
       loading = ora(`${bold('正在下载模板...')}`).start()
       await downloadTemplate(result.templateType.type, result.projectName)
       changePackageName(`${result.projectName}/package.json`, `${result.projectName}`)
-      changePackageTitle(`${result.projectName}/.env`, title)
+      // changePackageTitle(`${result.projectName}/.env`, title)
       loading.succeed('模板创建成功~')
       printFinish(root, cwd, packageManager, loading)
     }
