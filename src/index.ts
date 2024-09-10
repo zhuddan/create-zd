@@ -44,7 +44,7 @@ function init() {
       name: 'projectName',
       type: 'text',
       message: '请输入项目名称:',
-      initial: 'zd-app',
+      initial: 'my-app',
     },
     {
       name: 'templateType',
