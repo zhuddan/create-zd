@@ -10,12 +10,13 @@ import { type Ora, ora } from './ora'
 import { downloadTemplate } from './download'
 import { onCancel } from './cancel'
 import { deleteFileOrDir, isEmpty } from './file'
-import { changePackageName, changePackageTitle } from './change'
+import { changeHtmlTitle, changePackageName } from './change'
 import { capitalizeFirstLetter } from './utils'
 import { printFinish } from './printFinish'
 
 // export const instructions = gray('使用↑↓选择，空格或←→选中，a全选，回车确认')
 export const hint = '使用↑↓选择，回车确认'
+interface ITemplateType { type: string, htmlTitle?: boolean }
 
 function init() {
   const text = 'ZD-CREATOR'
@@ -39,6 +40,7 @@ function init() {
   console.log()
   console.log(output)
   console.log()
+
   return prompts([
     {
       name: 'projectName',
@@ -54,19 +56,19 @@ function init() {
       choices: [
         {
           title: 'vue',
-          value: { type: 'template-vue' },
+          value: { type: 'template-vue', htmlTitle: true },
         },
         {
           title: 'react',
-          value: { type: 'template-react' },
+          value: { type: 'template-react', htmlTitle: true },
+        },
+        {
+          title: 'vanilla',
+          value: { type: 'template-vanilla', htmlTitle: true },
         },
         {
           title: 'uni-app',
           value: { type: 'template-uni-app' },
-        },
-        {
-          title: 'vanilla',
-          value: { type: 'template-vanilla' },
         },
       ],
     },
@@ -97,12 +99,10 @@ async function start() {
     //     ? 'My-App'
     //     : `My-${capitalizeFirstLetter(result.templateType.type)}-App`,
     // })
-
     const cwd = process.cwd()
     const root = path.join(cwd, result.projectName!)
     const userAgent = process.env.npm_config_user_agent ?? ''
     const packageManager = /pnpm/.test(userAgent) ? 'pnpm' : /yarn/.test(userAgent) ? 'yarn' : 'npm'
-
     const overwrite = isEmpty(result.projectName)
       ? true
       : (await shouldOverwrite()).overwrite
@@ -119,7 +119,9 @@ async function start() {
       loading = ora(`${bold('正在下载模板...')}`).start()
       await downloadTemplate(result.templateType.type, result.projectName)
       changePackageName(`${result.projectName}/package.json`, `${result.projectName}`)
-      // changePackageTitle(`${result.projectName}/.env`, title)
+      if ((result.templateType as ITemplateType).htmlTitle) {
+        changeHtmlTitle(`${result.projectName}/index.html`, `${result.projectName}`)
+      }
       loading.succeed('模板创建成功~')
       printFinish(root, cwd, packageManager, loading)
     }

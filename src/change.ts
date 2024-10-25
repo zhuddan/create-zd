@@ -1,4 +1,4 @@
-import fs from 'node:fs'
+import fs, { copyFileSync } from 'node:fs'
 
 export function changePackageName(packageJsonFilePath: string, name: string) {
   const raw = fs.readFileSync(packageJsonFilePath).toString()
@@ -6,8 +6,9 @@ export function changePackageName(packageJsonFilePath: string, name: string) {
   fs.writeFileSync(packageJsonFilePath, res)
 }
 
-export function changePackageTitle(envPath: string, name: string) {
-  const raw = fs.readFileSync(envPath).toString()
-  const res = raw.replace(/(VITE_APP_TILE\s*=\s*').+(')/, `$1${name}$2`)
-  fs.writeFileSync(envPath, res)
+export function changeHtmlTitle(html: string, name: string) {
+  console.log({ html, name })
+  const raw = fs.readFileSync(html).toString()
+  const res = raw.replace(/<title>.*?<\/title>/i, `<title>${name}</title>`)
+  fs.writeFileSync(html, res)
 }
