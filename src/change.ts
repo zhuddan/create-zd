@@ -7,7 +7,6 @@ export function changePackageName(packageJsonFilePath: string, name: string) {
 }
 
 export function changeHtmlTitle(html: string, name: string) {
-  console.log({ html, name })
   const raw = fs.readFileSync(html).toString()
   const res = raw.replace(/<title>.*?<\/title>/i, `<title>${name}</title>`)
   fs.writeFileSync(html, res)
