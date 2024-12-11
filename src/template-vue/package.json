@@ -1,0 +1,31 @@
+{
+  "name": "templete-vue",
+  "type": "module",
+  "version": "0.0.2",
+  "private": true,
+  "packageManager": "pnpm@9.1.1",
+  "scripts": {
+    "build": "vue-tsc --noEmit && bumpp && vite build",
+    "dev": "vite --open",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview",
+    "bumpp": "bumpp"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.9.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue-macros/volar": "^0.19.1",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^24.0.0",
+    "pnpm": "^9.1.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vue-tsc": "^2.0.19"
+  }
+}
